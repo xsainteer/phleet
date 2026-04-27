@@ -1,5 +1,6 @@
 using Fleet.Agent.Models;
 using Fleet.Agent.Services;
+using Fleet.Agent.Services.Executors;
 using NSubstitute;
 
 namespace Fleet.Agent.Tests;

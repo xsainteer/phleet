@@ -6,10 +6,9 @@ using System.Text.Json;
 using System.Threading.Channels;
 using Fleet.Agent.Configuration;
 using Fleet.Agent.Models;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
-namespace Fleet.Agent.Services;
+namespace Fleet.Agent.Services.Executors;
 
 /// <summary>
 /// Manages a persistent `claude -p` process with streaming I/O.

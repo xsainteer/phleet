@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using Fleet.Agent.Abstractions;
 using Fleet.Agent.Configuration;
 using Fleet.Agent.Models;
+using Fleet.Agent.Services.Executors;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 

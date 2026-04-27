@@ -2,6 +2,7 @@ using System.Runtime.CompilerServices;
 using Fleet.Agent.Configuration;
 using Fleet.Agent.Models;
 using Fleet.Agent.Services;
+using Fleet.Agent.Services.Executors;
 using Microsoft.Extensions.Logging.Abstractions;
 using Microsoft.Extensions.Options;
 using NSubstitute;

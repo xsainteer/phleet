@@ -1,6 +1,6 @@
 using Fleet.Agent.Models;
 
-namespace Fleet.Agent.Services;
+namespace Fleet.Agent.Services.Executors;
 
 /// <summary>
 /// Abstraction over the LLM process that executes agent tasks.

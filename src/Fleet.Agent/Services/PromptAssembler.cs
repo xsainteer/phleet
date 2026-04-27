@@ -1,5 +1,6 @@
 using Fleet.Agent.Configuration;
 using Fleet.Agent.Models;
+using Fleet.Agent.Services.Executors;
 using Microsoft.Extensions.Options;
 
 namespace Fleet.Agent.Services;
