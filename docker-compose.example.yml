@@ -451,5 +451,4 @@ volumes:
 
 networks:
   fleet-net:
-    name: fleet-net
-    driver: bridge
+    external: true

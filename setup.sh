@@ -55,7 +55,8 @@ unset FLEET_BASE_DIR FLEET_CTO_AGENT FLEET_GROUP_CHAT_ID \
       MINIO_ACCESS_KEY MINIO_SECRET_KEY \
       FLEET_MEMORY_EMBEDDING_PROVIDER FLEET_MEMORY_EMBEDDING_DIMENSIONS \
       FLEET_MEMORY_OLLAMA_URL FLEET_MEMORY_OLLAMA_MODEL \
-      AUTHTOKENREFRESH__CLAUDECLIENTID AUTHTOKENREFRESH__CODEXCLIENTID
+      AUTHTOKENREFRESH__CLAUDECLIENTID AUTHTOKENREFRESH__CODEXCLIENTID \
+      AUTHTOKENREFRESH__GEMINICLIENTID
 
 # ── Canonical paths ───────────────────────────────────────────────────────────
 # FLEET_BASE_DIR is hardcoded to $SCRIPT_DIR/fleet — a nested, gitignored subdir
@@ -226,16 +227,18 @@ section "[2/7] AI Provider Auth..."
 echo "  Which AI provider(s) do you want to use?"
 echo "    1) claude"
 echo "    2) codex"
-echo "    3) both"
+echo "    3) gemini"
+echo "    4) all"
 read -rp "  Choice [1]: " provider_choice
 provider_choice="${provider_choice:-1}"
 
-USE_CLAUDE=false; USE_CODEX=false
+USE_CLAUDE=false; USE_CODEX=false; USE_GEMINI=false
 case "$provider_choice" in
   1) USE_CLAUDE=true ;;
   2) USE_CODEX=true ;;
-  3) USE_CLAUDE=true; USE_CODEX=true ;;
-  *) fail "Invalid choice — enter 1, 2, or 3"; exit 1 ;;
+  3) USE_GEMINI=true ;;
+  4) USE_CLAUDE=true; USE_CODEX=true; USE_GEMINI=true ;;
+  *) fail "Invalid choice — enter 1, 2, 3, or 4"; exit 1 ;;
 esac
 
 # Set by check_creds_claude — path to a readable credentials JSON file
@@ -332,8 +335,22 @@ check_creds_codex() {
   fi
 }
 
+check_creds_gemini() {
+  local creds="$HOME/.gemini/oauth_creds.json"
+  if [[ ! -f "$creds" ]]; then
+    fail "gemini credentials not found at $creds"
+    echo "  Open the gemini CLI at least once to authenticate, then re-run ./setup.sh"
+    exit 1
+  fi
+  if ! jq -e '.access_token' "$creds" >/dev/null 2>&1; then
+    fail "gemini credentials at $creds are missing access_token — re-authenticate and re-run ./setup.sh"; exit 1
+  fi
+  ok "gemini credentials valid"
+}
+
 if $USE_CLAUDE; then check_creds_claude; fi
 if $USE_CODEX;  then check_creds_codex;  fi
+if $USE_GEMINI; then check_creds_gemini; fi
 
 # ─────────────────────────────────────────────────────────────────────────────
 section "[3/7] Configuration..."
@@ -600,6 +617,22 @@ else
     chmod 600 "$FLEET_BASE_DIR/.codex-credentials.json"
   fi
 fi
+if $USE_GEMINI; then
+  if ! $DRY_RUN; then
+    cp "$HOME/.gemini/oauth_creds.json" "$FLEET_BASE_DIR/.gemini-credentials.json"
+    chmod 600 "$FLEET_BASE_DIR/.gemini-credentials.json"
+    ok "Gemini credentials → $FLEET_BASE_DIR/.gemini-credentials.json"
+  else
+    echo -e "  ${YELLOW}[dry-run]${NC} Would copy ~/.gemini/oauth_creds.json → $FLEET_BASE_DIR/.gemini-credentials.json"
+  fi
+else
+  # Placeholder so the compose bind-mount doesn't fail
+  if ! $DRY_RUN && [[ ! -f "$FLEET_BASE_DIR/.gemini-credentials.json" ]]; then
+    printf '{}' > "$FLEET_BASE_DIR/.gemini-credentials.json"
+    chmod 600 "$FLEET_BASE_DIR/.gemini-credentials.json"
+  fi
+fi
+
 
 # Copy seed.example.json → $FLEET_BASE_DIR/seed.json if missing
 # (the generated compose file mounts ./seed.json from its own directory).

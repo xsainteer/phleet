@@ -158,6 +158,13 @@ public sealed class ContainerProvisioningService(
             if (File.Exists(codexTokenStorePath))
                 binds.Add("./.codex-credentials.json:/root/.codex-host/auth.json:ro");
         }
+        else if (agent.Provider == "gemini")
+        {
+            // Mount gemini credentials for seeding new gemini containers (entrypoint.sh reads this)
+            var geminiTokenStorePath = Path.Combine(baseDir, ".gemini-credentials.json");
+            if (File.Exists(geminiTokenStorePath))
+                binds.Add("./.gemini-credentials.json:/root/.gemini-host/oauth_creds.json:ro");
+        }
         else
         {
             // Mount orchestrator-stored Claude credentials for seeding new containers (entrypoint.sh reads this)

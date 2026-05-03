@@ -44,6 +44,12 @@ else
         mkdir -p /root/.claude
         cp /root/.claude-host/.credentials.json /root/.claude/.credentials.json
     fi
+elif [ "$PROVIDER" = "gemini" ]; then
+    # Gemini auth
+    if [ -f /root/.gemini-host/oauth_creds.json ]; then
+        mkdir -p /root/.gemini
+        cp /root/.gemini-host/oauth_creds.json /root/.gemini/oauth_creds.json
+    fi
 fi
 # Git identity
 git config --global user.name "${GIT_USER_NAME:-Fleet Agent}"

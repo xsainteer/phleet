@@ -14,11 +14,18 @@ export const PROVIDER_MODELS: Record<string, string[]> = {
     'gpt-5.3-codex',
     'codex-mini-latest',
   ],
+  gemini: [
+    'gemini-2.0-flash-exp',
+    'gemini-2.0-flash-thinking-exp',
+    'gemini-1.5-pro',
+    'gemini-1.5-flash',
+  ],
 }
 
 export const PROVIDER_DEFAULT_MODEL: Record<string, string> = {
   claude: 'claude-sonnet-4-6',
   codex: 'gpt-5',
+  gemini: 'gemini-2.0-flash-exp',
 }
 
 export const CLAUDE_PERMISSION_MODES: string[] = [
